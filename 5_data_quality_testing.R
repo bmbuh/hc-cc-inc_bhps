@@ -1,11 +1,10 @@
 #Coded by: Brian Buh
 #Started on: 10.01.2022
-#Last Updated: 11.01.2022
+#Last Updated: 14.01.2022
 
 library(tidyverse)
 library(haven)
 library(lubridate)
-library(cowplot)
 
 ###########################################################################
 # Data quality analysis ---------------------------------------------------
@@ -53,6 +52,34 @@ yearinctest %>% count(is.na(ahhyneti)) #There are only 6 NA in the full data set
 #My childcare costs are also measured on a weekly level, while housing costs are measured at a monthly level.
 
 # -------------------------------------------------------------------------
+#I wanna compare all 18 waves of yearly data from BHPS and UKDA3909 as the annual info in much less in the latter
+#I use the year3909 bound DF and the BHPS yearly data
+
+year3909cut <- year3909 %>% 
+  select(hid, wave, hhyneti)
+
+#DF inccut created just below
+
+annualcomp <- 
+  left_join(inccut, year3909cut, by = c("hid", "wave")) %>% 
+  rename("hhynetibhps" = "hhyneti.x") %>% 
+  rename("hhyneti3909" = "hhyneti.y") %>% 
+  mutate(annualdiff = hhynetibhps - hhyneti3909)
+
+countdiff <- annualcomp %>% count(is.na(hhynetibhps), is.na(hhyneti3909))
+#There are 32377 missing in the 3909 DF that are available in the BHPS data, an additional 5803 NA in both
+summary(annualcomp$annualdiff)
+annualoutlier <- annualcomp %>% filter(annualdiff != 0) 
+    # %>% distinct(hid, .keep_all = TRUE)
+#There are 193 observations that do not match however these are clustered in 103 HH
+summary(annualoutlier$annualdiff)
+
+annualoutlier %>% 
+  ggplot(aes(x= annualdiff)) +
+  geom_histogram()
+#It is a relatively normal distribution around 0 although slightly more negative
+
+# -------------------------------------------------------------------------
 #I have included the following income variables:
 
 ## Household
@@ -72,7 +99,7 @@ income <- indhhbhps %>%
   select(pid, wave, hid, sex, age_dv, fihhmngrs_dv, fihhmb, hhneti, hhyneti, hhnetde, hhnetde2, bhcinda, paynty, paynti, loctax)
 
 #For joining later
-inccut <- income %>% select(pid, wave, hhneti, hhyneti) %>% 
+inccut <- income %>% select(pid, hid, wave, hhneti, hhyneti) %>% 
   mutate(hhneti = ifelse(hhneti == -9, NA, hhneti)) %>% 
   mutate(hhyneti = ifelse(hhyneti == -9, NA, hhyneti))
 

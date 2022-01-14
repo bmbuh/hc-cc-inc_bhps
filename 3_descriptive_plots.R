@@ -36,7 +36,7 @@ library(cowplot)
 
 #Step 1
 totfert <- fert_his %>% 
-  select(pp, hh1, sex, totalchild, parentbirth_m, parentbirth_yr, child1yr, child2yr, child3yr, last_intvyr) %>% 
+  select(pp, hh1, sex, totalchild, parentbirth_m, parentbirth_yr, child1m, child1yr, child2m, child2yr, child3m, child3yr, last_intvyr) %>% 
   rename("pid" = "pp") %>% 
   # filter(last_intvyr >= 2008) %>% 
   mutate(agelastint = last_intvyr - parentbirth_yr) %>% 

@@ -1,6 +1,6 @@
 #Coded by: Brian Buh
 #Started on: 12.10.2021
-#Last Updated: 
+#Last Updated: 14.01.2022
 
 ### Packages
 library(tidyverse)
@@ -28,95 +28,120 @@ ba_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannu
 bb_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w2/bb_jobhist_protect.dta")
 bb_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w2/bb_indresp_protect.dta")
 bb_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w2/bb_hhresp_protect.dta")
-
+bb_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/b_nethh.dta")
+bb_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/b_neta.dta")
 
 #wave 3
 bc_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w3/bc_jobhist_protect.dta")
 bc_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w3/bc_indresp_protect.dta")
 bc_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w3/bc_hhresp_protect.dta")
-
+bc_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/c_nethh.dta")
+bc_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/c_neta.dta")
 
 #wave 4
 bd_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w4/bd_jobhist_protect.dta")
 bd_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w4/bd_indresp_protect.dta")
 bd_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w4/bd_hhresp_protect.dta")
-
+bd_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/d_nethh.dta")
+bd_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/d_neta.dta")
 
 #wave 5
 be_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w5/be_jobhist_protect.dta")
 be_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w5/be_indresp_protect.dta")
 be_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w5/be_hhresp_protect.dta")
-
+be_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/e_nethh.dta")
+be_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/e_neta.dta")
 
 #wave6
 bf_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w6/bf_jobhist_protect.dta")
 bf_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w6/bf_indresp_protect.dta")
 bf_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w6/bf_hhresp_protect.dta")
-
+bf_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/f_nethh.dta")
+bf_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/f_neta.dta")
 
 #wave 7
 bg_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w7/bg_jobhist_protect.dta")
 bg_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w7/bg_indresp_protect.dta")
 bg_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w7/bg_hhresp_protect.dta")
-
+bg_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/g_nethh.dta")
+bg_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/g_neta.dta")
 
 #wave 8
 bh_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w8/bh_jobhist_protect.dta")
 bh_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w8/bh_indresp_protect.dta")
 bh_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w8/bh_hhresp_protect.dta")
-
+bh_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/h_nethh.dta")
+bh_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/h_neta.dta")
 
 #wave 9
 bi_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w9/bi_jobhist_protect.dta")
 bi_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w9/bi_indresp_protect.dta")
 bi_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w9/bi_hhresp_protect.dta")
-
+bi_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/i_nethh.dta")
+bi_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/i_neta.dta")
 
 #wave 10
 bj_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w10/bj_jobhist_protect.dta")
 bj_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w10/bj_indresp_protect.dta")
 bj_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w10/bj_hhresp_protect.dta")
+bj_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/j_nethh.dta")
+bj_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/j_neta.dta")
 
 #wave 11
 bk_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w11/bk_jobhist_protect.dta")
 bk_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w11/bk_indresp_protect.dta")
 bk_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w11/bk_hhresp_protect.dta")
+bk_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/k_nethh.dta")
+bk_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/k_neta.dta")
 
 #wave 12
 bl_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w12/bl_jobhist_protect.dta")
 bl_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w12/bl_indresp_protect.dta")
 bl_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w12/bl_hhresp_protect.dta")
+bl_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/l_nethh.dta")
+bl_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/l_neta.dta")
 
 #wave 13
 bm_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w13/bm_jobhist_protect.dta")
 bm_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w13/bm_indresp_protect.dta")
 bm_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w13/bm_hhresp_protect.dta")
+bm_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/m_nethh.dta")
+bm_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/m_neta.dta")
 
 #wave 14
 bn_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w14/bn_jobhist_protect.dta")
 bn_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w14/bn_indresp_protect.dta")
 bn_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w14/bn_hhresp_protect.dta")
+bn_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/n_nethh.dta")
+bn_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/n_neta.dta")
 
 #wave 15
 bo_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w15/bo_jobhist_protect.dta")
 bo_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w15/bo_indresp_protect.dta")
 bo_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w15/bo_hhresp_protect.dta")
+bo_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/o_nethh.dta")
+bo_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/o_neta.dta")
 
 #wave 16
 bp_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w16/bp_jobhist_protect.dta")
 bp_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w16/bp_indresp_protect.dta")
 bp_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w16/bp_hhresp_protect.dta")
+bp_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/p_nethh.dta")
+bp_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/p_neta.dta")
 
 #wave 17
 bq_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w17/bq_jobhist_protect.dta")
 bq_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w17/bq_indresp_protect.dta")
 bq_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w17/bq_hhresp_protect.dta")
+bq_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/q_nethh.dta")
+bq_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/q_neta.dta")
 
 #wave 18
 br_jobhist <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w18/br_jobhist_protect.dta")
 br_indresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w18/br_indresp_protect.dta")
 br_hhresp <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_w18/br_hhresp_protect.dta")
-
+br_weekinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/dacurrent/r_nethh.dta")
+br_yearinc <- read_dta("S:/Questionnaires/UKHLS/UKDA-3909-stata10/stata10/daannual/r_neta.dta")
 
 #xwavedata
 bhpsxwave <- read_dta("S:/Questionnaires/UKHLS/Understanding_)Societyw1-9_SpecialLicence/bhps_wx/xwaveid_bh_protect.dta")

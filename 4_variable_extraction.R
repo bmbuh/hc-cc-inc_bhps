@@ -1,6 +1,6 @@
 #Coded by: Brian Buh
 #Started on: 10.01.2022
-#Last Updated: 11.01.2022
+#Last Updated: 14.01.2022
 
 library(tidyverse)
 library(haven)
@@ -17,7 +17,7 @@ library(lubridate)
 # -------------------------------------------------------------------------
 
 #Selecting variables and give them wave specific names
-hhvar <- c("hid", "hidp",
+hhvar <- c("hid", "hidp", "intdatey",
            "fihhmngrs_dv", "fihhmb", "hhneti", "hhyneti", "hhnetde", "hhnetde2", "bhcinda", "loctax", #These are the income variables
            "hcost", "xphsg", "xphsn", "rent", "rentg_bh", "tenure_dv", "hsownd_bh", "hsroom", "hstype") #These are housing cost variables
 
@@ -368,4 +368,93 @@ indhhbhps_test <- left_join(ind_bhps, hh_bhps, by= c("hidp", "wave"))
 saveRDS(indhhbhps, file = "indhhbhps.rds")
 
 
+
+###########################################################################
+# Making an 18-wave data set from the 3909 data ---------------------------
+###########################################################################
+
+#The data is seperated by weekly or yearly household net income data by wave. 
+#It uses the prefix "w" for each wave for each variable. The first step is to chop off the prefix
+
+ba_yi <- ba_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+bb_yi <- bb_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+bc_yi <- bc_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+bd_yi <- bd_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+be_yi <- be_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+bf_yi <- bf_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+bg_yi <- bg_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+bh_yi <- bh_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+bi_yi <- bi_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+bj_yi <- bj_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+bk_yi <- bk_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+bl_yi <- bl_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+bm_yi <- bm_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+bn_yi <- bn_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+bo_yi <- bo_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+bp_yi <- bp_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+bq_yi <- bq_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+br_yi <- br_yearinc %>%
+  rename_at(1:length(.), list(~ substr(., 2, nchar(.))))
+
+year3909 <-
+  bind_rows(ba_yi, bb_yi) %>%
+  bind_rows(., bc_yi) %>%
+  bind_rows(., bd_yi) %>%
+  bind_rows(., be_yi) %>%
+  bind_rows(., bf_yi) %>%
+  bind_rows(., bg_yi) %>%
+  bind_rows(., bh_yi) %>%
+  bind_rows(., bi_yi) %>%
+  bind_rows(., bj_yi) %>% 
+  bind_rows(., bk_yi) %>%
+  bind_rows(., bl_yi) %>%
+  bind_rows(., bm_yi) %>%
+  bind_rows(., bn_yi) %>%
+  bind_rows(., bo_yi) %>%
+  bind_rows(., bp_yi) %>%
+  bind_rows(., bq_yi) %>%
+  bind_rows(., br_yi) %>% 
+  relocate("ave", .after = "hid") %>%
+  ungroup() %>%  #Note: arrange doesn't work here since it appears that each "hid" is unique to each wave
+  rename("wave" = "ave") %>% 
+  rename("basepi" = "asepi") %>% 
+  rename("bhcinda" = "hcinda") %>% 
+  rename("eq_moecd" = "q_moecd")
+
+
+saveRDS(year3909, "year3909.rds")
 
