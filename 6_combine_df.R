@@ -1,6 +1,6 @@
 #Coded by: Brian Buh
 #Started on: 14.01.2022
-#Last Updated: 
+#Last Updated: 17.01.2022
 
 library(tidyverse)
 library(haven)
@@ -128,7 +128,7 @@ indhhbhps3 <- indhhbhps2 %>%
 
 #Step 8 - Filtering out rows with NA from missing survey data
 indhhbhps4 <- indhhbhps3 %>% 
-  filter(!is.na(sex)) %>% #I have tried using different variables as filters, but sex is most uniformally important
+  filter(!is.na(sex)) %>% #I have tried using different variables as filters, but sex is most uniformly important
   select(-event, -event2) %>% 
   mutate(event = ifelse(!is.na(year), 1, 0))
 
@@ -219,13 +219,77 @@ indhhbhps8 <- indhhbhps6 %>%
 indhhbhps8 %>% count(event) #importantly no loss of events
 summary(indhhbhps8$age_dv)
 
+# Step 14 - Use the imputations from "test2' below
+indhhbhps9 <- indhhbhps8 %>% 
+  mutate(sex = ifelse(sex <= 0, NA, sex)) %>% #There are NA in the sex column for individuals who have it previously recorded
+  group_by(pid) %>% 
+  fill(sex, .direction = "downup") %>% 
+  mutate(rownum = row_number()) %>% 
+  mutate(totobs = length(rownum)) %>% 
+  ungroup() %>% 
+  filter(!is.na(sex)) %>% 
+  fill(birthy, .direction = "up") %>% #birthy and birthm can be imputed up as they don't change
+  fill(birthm, .direction = "up") %>% 
+  unite(intdate, c(istrtdatm, istrtdaty), sep = "-", remove = FALSE) %>% #combines the mnth & yr var to make int dates
+  mutate(intdate = parse_date_time(intdate, "my")) %>% 
+  unite(dob, c(birthm, birthy), sep = "-", remove = FALSE) %>% #combines the mnth & yr var to make int dates
+  mutate(dob = parse_date_time(dob, "my")) %>% 
+  mutate(age = interval(dob, intdate) / years(1)) %>%  #This variable gives me an exact age at time of interview (non-rounded)
+  mutate(ageyr = trunc(age)) %>%  #Removes the values after decimals 
+  filter(!is.na(age), age >=16) %>% #It is clear that NA and U16 observations are not valid here
+  mutate(agegrp = ifelse(age <= 15, 1, ifelse(age >=16 & age <= 29, 2, ifelse(age >= 30 & age <= 45, 3, 4))))
+  
 #The final RDS will be saved under the friendlier name incfert
-saveRDS(indhhbhps8, "incfert.rds")
+saveRDS(indhhbhps9, "incfert.rds")
+
+###########################################################################
+# DF Testing --------------------------------------------------------------
+############################################################################
+
+#Note: this testing was done using the DF created in indhhbhps8 and then imputations found were add as indhhbhps9
+test <- incfert %>% 
+  distinct(pid, .keep_all = TRUE) %>% 
+  count(totalchild) #Parity total: 0 = 14880, 1 = 1339, 2 = 1890, 3 = 878, 4+ = 195
+
+#There appears to be a lot of 0 parity individuals, why?
+test2 <- incfert %>% 
+  # filter(totalchild == 0) %>% #Uncomment this line for test3
+  select(pid, wave, sex, age_dv, birthm, birthy, istrtdatm, istrtdaty, totalchild) %>% 
+  mutate(sex = ifelse(sex <= 0, NA, sex)) %>% #There are NA in the sex column for individuals who have it previously recorded
+  group_by(pid) %>% 
+  fill(sex, .direction = "downup") %>% 
+  mutate(rownum = row_number()) %>% 
+  mutate(totobs = length(rownum)) %>% 
+  ungroup() %>% 
+  filter(!is.na(sex)) %>% 
+  fill(birthy, .direction = "up") %>% #birthy and birthm can be imputed up as they don't change
+  fill(birthm, .direction = "up") %>% 
+  unite(intdate, c(istrtdatm, istrtdaty), sep = "-", remove = FALSE) %>% #combines the mnth & yr var to make int dates
+  mutate(intdate = parse_date_time(intdate, "my")) %>% 
+  unite(dob, c(birthm, birthy), sep = "-", remove = FALSE) %>% #combines the mnth & yr var to make int dates
+  mutate(dob = parse_date_time(dob, "my")) %>% 
+  mutate(age = interval(dob, intdate) / years(1)) %>%  #This variable gives me an exact age at time of interview (non-rounded)
+  mutate(ageyr = trunc(age)) %>%  #Removes the values after decimals 
+  filter(!is.na(age), age >=16) #It is clear that NA and U16 observations are not valid here
+  
+
+#Warning: these tests were done by in steps. "test2" was update through the testing rounds for simplicity  
+test2 %>% count(sex) #There are still 63 NA (meaning no wave had a sex registered)
+test3 <- test2 %>% filter(is.na(sex)) #All these observations come from waves 16-18 and are mostly younger individuals. Removed from "test2"
+
+#Testing for NA in the "age_dv" variable
+test2 %>% count(is.na(age_dv)) #There are 4235 observations with a missing age; 2677 come from Parity 0
+
+test4 <- test2 %>% 
+  filter(is.na(age_dv)) #In all cases where the age_dv is NA the birthy is NA
+summary(test4$totobs) #There observations are NOT dropable, the age must be imputed (tested via number of observations)
+test4 %>% count(wave) #All NA come from Wave 1 (except 1)
 
 
-
-
-
+test5 <- test2 %>% count(ageyr)
+test6 <- test2 %>% 
+  mutate(agegrp = ifelse(age <= 15, 1, ifelse(age >=16 & age <= 29, 2, ifelse(age >= 30 & age <= 45, 3, 4)))) %>% 
+  count(agegrp, totalchild) #See where my distibution of ages are: I can clear drop U16 and NA
 
 
   
