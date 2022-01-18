@@ -1,6 +1,6 @@
 #Coded by: Brian Buh
 #Started on: 14.01.2022
-#Last Updated: 17.01.2022
+#Last Updated: 18.01.2022
 
 library(tidyverse)
 library(haven)
@@ -10,12 +10,12 @@ library(lubridate)
 # Combining fertility and inc/hc/cc dataframes ----------------------------
 ###########################################################################
 
-
+#This section creates the DF "childdoblong"
 # -------------------------------------------------------------------------
-#Editing the DF "combo" to extract child birth dates ----------------------
+#Editing the DF "fertbhps" to extract child birth dates ----------------------
 # -------------------------------------------------------------------------
 
-extmonth <- combo %>% 
+extmonth <- fertbhps %>% 
   select(pid, child1m, child1yr, child2m, child2yr, child3m, child3yr) %>% 
   unite(child1date, child1m, child1yr, sep = "-", remove = FALSE) %>% 
   unite(child2date, child2m, child2yr, sep = "-", remove = FALSE) %>% 
@@ -29,7 +29,7 @@ extmonth <- combo %>%
   separate(date, into = c("month", "year"), sep = "-", convert = TRUE)
 
 
-childdoblong <- combo %>% 
+childdoblong <- fertbhps %>% 
   select(pid, totalchild, child1yr, child2yr, child3yr) %>% 
   pivot_longer(cols = c('child1yr', 'child2yr', 'child3yr'), names_to = "parity", values_to = "year") %>% 
   mutate(parity = ifelse(is.na(year), NA, parity )) %>% 
@@ -43,9 +43,6 @@ childdoblong <- combo %>%
 #This RDS is a logn format of the child birth dates and total number of children
 saveRDS(childdoblong, "childdoblong.rds")
 
-#Needed for Step 5 below
-totalchild <- combo %>% 
-  select(pid, totalchild)
 
 testbirth <- childdoblong %>% 
   filter(year >=1991)
@@ -82,6 +79,10 @@ missingwave4 <- missingwave3 %>%
 test4 %>% count(noinfo)
 
 #Step 5 - 
+#Needed for Step 5 below
+totalchild <- fertbhps %>% 
+  select(pid, totalchild)
+
 indhhbhps2 <- missingwave3 %>% 
   select(-totalchild) %>% 
   left_join(., totalchild, by = "pid") %>% 
@@ -187,13 +188,13 @@ indhhbhps5 %>% count(event) #I have a total of 6436 events after all the transfo
 
 test <- indhhbhps5 %>% distinct(pid)
 
-#To create an indicator for which respondents have at least 1 event during the observation period
-paritycheck <- indhhbhps6 %>% 
+##To create an indicator for which respondents have at least 1 event during the observation period
+paritycheck <- indhhbhps5 %>% 
   group_by(pid) %>% 
   summarise(obsevent = sum(event)) %>% 
   ungroup()
 
-paritycheck %>% count(obsevent) #There are 4302 uniquie individuals who experience at least 1 childbirth
+paritycheck %>% count(obsevent) #There are 4302 unique individuals who experience at least 1 childbirth
 
 # Step 11 - add in the parity check to remove observations where individuals have children before observation period
 indhhbhps6 <- indhhbhps5 %>% 
@@ -238,9 +239,79 @@ indhhbhps9 <- indhhbhps8 %>%
   mutate(ageyr = trunc(age)) %>%  #Removes the values after decimals 
   filter(!is.na(age), age >=16) %>% #It is clear that NA and U16 observations are not valid here
   mutate(agegrp = ifelse(age <= 15, 1, ifelse(age >=16 & age <= 29, 2, ifelse(age >= 30 & age <= 45, 3, 4))))
+
+# Step 15 - Make dummies to indicate waves before events
+lag1 <- indhhbhps9 %>% 
+  select(pid, rownum, event) %>% 
+  mutate(rownum = rownum-1) %>% 
+  rename("lag1dummy" = "event")
+
+lag2 <- indhhbhps9 %>% 
+  select(pid, rownum, event) %>% 
+  mutate(rownum = rownum-2) %>% 
+  rename("lag2dummy" = "event")
+
+lag3 <- indhhbhps9 %>% 
+  select(pid, rownum, event) %>% 
+  mutate(rownum = rownum-3) %>% 
+  rename("lag3dummy" = "event")
+
+indhhbhps10 <- indhhbhps9 %>% 
+  left_join(., lag1, by = c("pid", "rownum")) %>% 
+  left_join(., lag2, by = c("pid", "rownum")) %>% 
+  left_join(., lag3, by = c("pid", "rownum")) %>% 
+  mutate(lag1dummy = ifelse(is.na(lag1dummy), 0, lag1dummy)) %>% 
+  mutate(lag2dummy = ifelse(is.na(lag2dummy), 0, lag2dummy)) %>% 
+  mutate(lag3dummy = ifelse(is.na(lag3dummy), 0, lag3dummy))
+
+lagtest <-  indhhbhps10 %>% 
+  select(pid, event, lag1dummy, lag2dummy, lag3dummy, parity)
+
+# Step 16 - Add dummies for combination of parity observed
+# New categorical variable parity.cat
+## 0 = None, 1 = Only First, 2 = Only Second, 3 = Only Third
+## 4 = First and Second, 5 = Second and Third, 6 = First, Second and Third
+
+indhhbhps11 <- indhhbhps10 %>% 
+  group_by(pid) %>% 
+  distinct(parity) %>% 
+  filter(parity != 0) %>% 
+  add_count() %>% 
+  mutate(parity2 = ifelse(n == 2 & parity == 1, 2, parity)) %>% 
+  ungroup() %>% 
+  rename("n_event" = "n") %>% 
+  select(pid, n_event)
+
+indhhbhps11 %>% count(n_event)
+
+birthseq.cat<- indhhbhps11 %>% 
+  group_by(pid) %>% 
+  summarise(parity2 = sum(parity2)) %>% 
+  ungroup() %>% 
+  rename("parity.cat" = "parity2")
+
+birthseq.cat %>% count(parity.cat)
+
+indhhbhps12 <- indhhbhps10 %>% 
+  left_join(., birthseq.cat, by = "pid") %>% 
+  mutate(parity.cat = ifelse(is.na(parity.cat), 0, parity.cat)) %>% 
+  left_join(., indhhbhps11, by = "pid") %>% 
+  mutate(n_event = ifelse(is.na(n_event), 0, n_event)) %>% 
+  distinct(pid, wave, .keep_all = TRUE)
+
+test <- indhhbhps12 %>%
+  group_by(pid) %>% 
+  distinct(n_event, .keep_all = TRUE) %>% 
+  ungroup()
+test %>% count(n_event, parity.cat)
+
+#I had a doubling of observation issues - DELETE this later
+indhhbhps13 <- indhhbhps12 %>%  
+   distinct(pid, wave, .keep_all = TRUE)
+ 
   
 #The final RDS will be saved under the friendlier name incfert
-saveRDS(indhhbhps9, "incfert.rds")
+saveRDS(indhhbhps12, "incfert.rds")
 
 ###########################################################################
 # DF Testing --------------------------------------------------------------
@@ -291,5 +362,6 @@ test6 <- test2 %>%
   mutate(agegrp = ifelse(age <= 15, 1, ifelse(age >=16 & age <= 29, 2, ifelse(age >= 30 & age <= 45, 3, 4)))) %>% 
   count(agegrp, totalchild) #See where my distibution of ages are: I can clear drop U16 and NA
 
-
+table <- incfert %>% count(event, rownum)
+table2 <- incfert %>% distinct(pid, .keep_all = TRUE) %>%  count(n_event, parity.cat)
   
